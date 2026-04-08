@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>drippppaprearl</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main>
+    <section class="hero" style="background-image:url('https://ryokorain.com/cdn/shop/files/black_994c99a8-e60b-49d9-ad04-b5117e0edc2f.jpg')">
+      <div class="inner">
+        <h1>MESH SHORTS ONLY</h1>
+        <p>Lightweight. Loud. Built to move.</p>
+        <a class="btn" href="collection.html?c=mesh-shorts">SHOP MESH</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>ADULT MESH</h2>
+      <p class="sub">The everyday staple</p>
+      <div class="grid" id="adult"></div>
+    </section>
+
+    <section class="section">
+      <h2>YOUTH MESH</h2>
+      <p class="sub">Same drip, sized down</p>
+      <div class="grid" id="youth"></div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="./data.js"></script>
+  <script src="./site.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("adult").innerHTML =
+        PRODUCTS.filter(p=>p.collections.includes("adult-mesh")).map(productCard).join("");
+      document.getElementById("youth").innerHTML =
+        PRODUCTS.filter(p=>p.collections.includes("youth-mesh")).map(productCard).join("");
+    });
+  </script>
+</body>
+</html>

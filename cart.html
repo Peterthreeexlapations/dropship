@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cart — drippppaprearl</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <section class="cart">
+      <h1>YOUR CART</h1>
+      <div id="rows"></div>
+      <div class="totals" id="totals"></div>
+      <div style="text-align:right"><button id="checkout-btn" class="btn dark" onclick="checkout()">CHECKOUT</button></div>
+      <p id="checkout-err" style="color:#900;text-align:right;margin-top:8px;font-size:13px"></p>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="./data.js"></script>
+  <script src="./site.js"></script>
+  <script>
+    function render() {
+      const cart = cartGet();
+      const rows = document.getElementById("rows");
+      if (!cart.length) { rows.innerHTML = '<p class="empty">Your cart is empty.</p>'; document.getElementById("totals").textContent = ""; return; }
+      let total = 0;
+      rows.innerHTML = cart.map(item => {
+        const p = PRODUCTS.find(x=>x.slug===item.slug); if (!p) return "";
+        total += p.price * item.qty;
+        return `<div class="row">
+          <img src="${p.img}" alt="${p.title}" />
+          <div class="meta"><div class="t">${p.title}</div><div class="p">Size ${item.size||'—'} · ${fmt(p.price)} × ${item.qty}</div></div>
+          <button class="rm" onclick="cartRemove('${p.slug}','${item.size||''}');render()">REMOVE</button>
+        </div>`;
+      }).join("");
+      document.getElementById("totals").innerHTML = `<span>TOTAL</span><span>${fmt(total)}</span>`;
+    }
+    async function checkout() {
+      const cart = cartGet();
+      if (!cart.length) return;
+      const items = cart.map(item => {
+        const p = PRODUCTS.find(x => x.slug === item.slug);
+        return p && { title: p.title, price: p.price, qty: item.qty, size: item.size, image: p.img };
+      }).filter(Boolean);
+
+      const btn = document.getElementById("checkout-btn");
+      const err = document.getElementById("checkout-err");
+      btn.disabled = true; btn.textContent = "REDIRECTING…"; err.textContent = "";
+      try {
+        const r = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || "Checkout failed");
+        window.location = data.url;
+      } catch (e) {
+        err.textContent = e.message + " (the /api/checkout endpoint only works on Vercel — not on the local python server)";
+        btn.disabled = false; btn.textContent = "CHECKOUT";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>

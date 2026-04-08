@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>drippppaprearl</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <section class="page" id="page"></section>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="./data.js"></script>
+  <script src="./site.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const slug = qs("p");
+      const page = PAGES[slug];
+      const root = document.getElementById("page");
+      if (!page) { root.innerHTML = "<h1>NOT FOUND</h1><p>That page doesn't exist.</p>"; return; }
+      document.title = page.title + " — " + BRAND.name;
+      root.innerHTML = `<h1>${page.title}</h1><p>${page.body}</p>`;
+    });
+  </script>
+</body>
+</html>
